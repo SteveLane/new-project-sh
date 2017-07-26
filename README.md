@@ -11,7 +11,7 @@ Some of the inspiration is from [https://github.com/chendaniely/computational-pr
 Simply make the script executable `chmod u+x new_project.sh`, and call it with the name of the new project as the argument:
 
 ```bash
-$ ./new_project target_directory
+$ ./new_project.sh target_directory
 ```
 
 ## What the script does
