@@ -2,7 +2,7 @@
 # Little script to create a new data analysis project directory
 # Requires a single cmdline argument for the new project name
 # With inspiration from https://github.com/chendaniely/computational-project-cookie-cutter
-# Time-stamp: <2017-07-27 15:44:25 (slane)>
+# Time-stamp: <2017-07-27 15:56:20 (slane)>
 
 # Don't kill files
 set -o noclobber
@@ -82,7 +82,7 @@ all: install-packages data/data.rds manuscripts/manuscript.pdf
 # Rules to make manuscripts
 # manuscripts/manuscript.tex: manuscripts/manuscript.Rnw data/data.rds
 # 	cd \$(<D); \\
-# 	Rscript --no-save --no-restore \$(<F)
+# 	Rscript --no-save --no-restore -e "knitr::knit('\$(<F)')"
 
 # manuscripts/manuscript.pdf: manuscripts/manuscript.tex
 # 	cd \$(<D); \\
