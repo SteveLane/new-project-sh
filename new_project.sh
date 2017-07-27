@@ -2,7 +2,7 @@
 # Little script to create a new data analysis project directory
 # Requires a single cmdline argument for the new project name
 # With inspiration from https://github.com/chendaniely/computational-project-cookie-cutter
-# Time-stamp: <2017-07-27 13:40:40 (slane)>
+# Time-stamp: <2017-07-27 15:44:25 (slane)>
 
 # Don't kill files
 set -o noclobber
@@ -183,7 +183,7 @@ if(exists("repos")){
 pkg <- scan(insts, "character")
 new.pkg <- pkg[!(pkg %in% installed.packages()[, "Package"])]
 ## Install if not already installed (including dependencies).
-if(length(pkg) > 0){
+if(length(new.pkg) > 0){
     install.packages(new.pkg, dependencies = TRUE)
 } else {
     message("All packages currently installed.")
