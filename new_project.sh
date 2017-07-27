@@ -2,7 +2,7 @@
 # Little script to create a new data analysis project directory
 # Requires a single cmdline argument for the new project name
 # With inspiration from https://github.com/chendaniely/computational-project-cookie-cutter
-# Time-stamp: <2017-07-27 15:56:20 (slane)>
+# Time-stamp: <2017-07-27 16:01:40 (slane)>
 
 # Don't kill files
 set -o noclobber
@@ -109,7 +109,8 @@ clobber: clean-manuscripts
 # separate scripts. If the packages are not installed, make should return an
 # error, saying that the packages are not available. This is politic; don't
 # assume the user wants to install stuff without asking.
-install-packages: scripts/strip-libs.sh R/ipak.R
+install-packages: scripts/installs.txt
+scripts/installs.txt: scripts/strip-libs.sh R/ipak.R
 	cd scripts; \\
 	chmod u+x strip-libs.sh; \\
 	./strip-libs.sh ../R/ installs.txt; \\
