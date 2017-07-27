@@ -2,7 +2,7 @@
 # Little script to create a new data analysis project directory
 # Requires a single cmdline argument for the new project name
 # With inspiration from https://github.com/chendaniely/computational-project-cookie-cutter
-# Time-stamp: <2017-07-26 14:29:18 (slane)>
+# Time-stamp: <2017-07-27 13:35:19 (slane)>
 
 # Don't kill files
 set -o noclobber
@@ -112,7 +112,7 @@ clobber: clean-manuscripts
 install-packages: scripts/strip-libs.sh R/ipak.R
 	cd scripts; \\
 	chmod u+x strip-libs.sh; \\
-	./strip-libs.sh ../scripts/ installs.txt; \\
+	./strip-libs.sh ../R/ installs.txt; \\
 	Rscript --no-save --no-restore ../R/ipak.R insts=installs.txt
 EOF
 
@@ -151,11 +151,10 @@ args <- commandArgs(trailingOnly = TRUE)
 ## Author: Steve Lane
 ## Synopsis: Script to test for installed packages, and if not installed,
 ## install them.
-## Time-stamp: <>
 ################################################################################
 ################################################################################
-if(!(length(args) == 1)){
-    stop("A single argument must be passed to ipak.R: insts.\ninsts is the location of a newline separated list of required packages.\nExample: Rscript ipak.R insts=../installs.txt",
+if(length(args) == 0){
+    stop("A single argument must be passed to ipak.R: insts.\ninsts is the location of a newline separated list of required packages:\n\tRscript ipak.R insts=path/to/installs.txt\nA repository may be passed using the repos option:\n\tRscript ipak.R insts=path/to/installs.txt repos=REPOS",
          call. = FALSE)
 } else {
     hasOpt <- grepl("=", args)
@@ -171,17 +170,18 @@ if(!(length(args) == 1)){
         }
     }
 }
-pkg <- scan(insts, "character")
-## Check for github packages (throw away github username)
-chk.git <- gsub(".*/", "", pkg)    
-new.pkg <- pkg[!(chk.git %in% installed.packages()[, "Package"])]
-if(!(length(new.pkg) == 0)){
-    git.ind <- grep("/", new.pkg)
-    if(length(git.ind) == 0){
-        install.packages(new.pkg, dependencies = TRUE,
-                         repos = "https://cran.csiro.au/")
-    } else {
-        devtools::install_github(new.pkg[git.ind])
+if(exists("repos")){
+    options(repos = c(CRAN = repos))
+} else {
+    ## Set default cran repository.
+    ## Use the one set from .Rprofile if given, else set.
+    if(getOption("repos") == "@CRAN" | is.null(getOption("repos"))){
+        options(repos = c(CRAN = "https://cran.rstudio.com"))
     }
-}
+}   
+## Check if packages installed
+pkg <- scan(insts, "character")
+new.pkg <- pkg[!(pkg %in% installed.packages()[, "Package"])]
+## Install if not already installed (including dependencies).
+install.packages(new.pkg, dependencies = TRUE)
 EOF
