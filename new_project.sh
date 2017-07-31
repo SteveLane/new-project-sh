@@ -2,7 +2,7 @@
 # Little script to create a new data analysis project directory
 # Requires a single cmdline argument for the new project name
 # With inspiration from https://github.com/chendaniely/computational-project-cookie-cutter
-# Time-stamp: <2017-07-27 16:01:40 (slane)>
+# Time-stamp: <2017-08-01 09:34:10 (slane)>
 
 # Don't kill files
 set -o noclobber
@@ -176,7 +176,7 @@ if(exists("repos")){
 } else {
     ## Set default cran repository.
     ## Use the one set from .Rprofile if given, else set.
-    if(getOption("repos") == "@CRAN" | is.null(getOption("repos"))){
+    if(getOption("repos") == "@CRAN@" | is.null(getOption("repos"))){
         options(repos = c(CRAN = "https://cran.rstudio.com"))
     }
 }   
