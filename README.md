@@ -14,7 +14,7 @@ Simply make the script executable `chmod u+x new_project.sh`, and call it with t
 $ ./new_project.sh target_directory
 ```
 
-If you want it o be available everyone, copy it over to `/usr/local/bin`.
+If you want it to be available everyone, copy it over to `/usr/local/bin`.
 
 ## What the script does
 
