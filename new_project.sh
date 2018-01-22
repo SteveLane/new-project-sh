@@ -2,7 +2,7 @@
 # Little script to create a new data analysis project directory
 # Requires a single cmdline argument for the new project name
 # With inspiration from https://github.com/chendaniely/computational-project-cookie-cutter
-# Time-stamp: <2017-08-01 09:34:10 (slane)>
+# Time-stamp: <2018-01-22 17:12:36 (slane)>
 
 # Don't kill files
 set -o noclobber
@@ -114,6 +114,7 @@ scripts/installs.txt: scripts/strip-libs.sh R/ipak.R
 	cd scripts; \\
 	chmod u+x strip-libs.sh; \\
 	./strip-libs.sh ../R/ installs.txt; \\
+	./strip-libs.sh ../Rmd/ installs.txt; \\
 	Rscript --no-save --no-restore ../R/ipak.R insts=installs.txt
 EOF
 
@@ -125,15 +126,7 @@ cat > scripts/strip-libs.sh <<EOF
 # text file it is stored in.
 folder=\$1
 inst=\$2
-if [ -f \$inst ] ; then
-    rm \$inst
-fi
-for filename in \$folder/*.R; do
-    if [ -f \$filename ]; then
-	awk -F '[(]|[)]' '/^library|^require/{print \$2;}' \$filename >> \$inst
-    fi
-done
-for filename in \$folder/*.r; do
+for filename in \$folder/*.{r,R}{md,}; do
     if [ -f \$filename ]; then
 	awk -F '[(]|[)]' '/^library|^require/{print \$2;}' \$filename >> \$inst
     fi
