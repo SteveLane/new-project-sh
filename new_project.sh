@@ -2,7 +2,7 @@
 # Little script to create a new data analysis project directory
 # Requires a single cmdline argument for the new project name
 # With inspiration from https://github.com/chendaniely/computational-project-cookie-cutter
-# Time-stamp: <2018-01-22 17:12:36 (slane)>
+# Time-stamp: <2018-02-02 09:38:49 (slane)>
 
 # Don't kill files
 set -o noclobber
@@ -15,7 +15,7 @@ mkdir $1
 
 # Create the extra required directories
 cd $1
-mkdir data data-raw figs manuscripts R scripts
+mkdir data data-raw figs manuscripts R Rmd scripts
 
 # Add a README.md
 cat > README.md <<EOF
