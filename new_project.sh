@@ -2,7 +2,7 @@
 # Little script to create a new data analysis project directory
 # Requires a single cmdline argument for the new project name
 # With inspiration from https://github.com/chendaniely/computational-project-cookie-cutter
-# Time-stamp: <2018-02-12 07:56:59 (slane)>
+# Time-stamp: <2018-12-04 08:35:01 (slane)>
 
 # Don't kill files
 set -o noclobber
@@ -19,7 +19,7 @@ mkdir data data-raw figs manuscripts R Rmd scripts
 
 # Add a README.md
 cat > README.md <<EOF
-# Project name
+# $1
 
 ## Project description
 
@@ -72,36 +72,47 @@ cat > Makefile <<EOF
 
 all: install-packages data/data.rds manuscripts/manuscript.pdf
 
+# Set the directory of the Makefile.
+ROOT_DIR:=\$(shell dirname \$(realpath \$(lastword \$(MAKEFILE_LIST))))
+
+################################################################################
+# Build docker container for reproducible environment
+# .PHONY: build-docker
+# build-docker: .build.docker
+# .build.docker: docker/Dockerfile
+# 	docker build --rm -t container-name docker/ \\
+# 	&& touch .build.docker
+
 ################################################################################
 # Rules to make data
 # data/data.rds: R/clean-data.R data-raw/data.csv
-# 	cd \$(<D); \\
-# 	Rscript --no-save --no-restore \$(<F)
+# 	cd \$(<D) \\
+# 	&& Rscript --no-save --no-restore \$(<F)
 
 ################################################################################
 # Rules to make manuscripts
 # manuscripts/manuscript.tex: manuscripts/manuscript.Rnw data/data.rds
-# 	cd \$(<D); \\
-# 	Rscript --no-save --no-restore -e "knitr::knit('\$(<F)')"
+# 	cd \$(<D) \\
+# 	&& Rscript --no-save --no-restore -e "knitr::knit('\$(<F)')"
 
 # manuscripts/manuscript.pdf: manuscripts/manuscript.tex
-# 	cd \$(<D); \\
-# 	latexmk -pdf \$(<F)
+# 	cd \$(<D) \\
+# 	&& latexmk -pdf \$(<F)
 
 # manuscripts/manuscript.html: manuscripts/manuscript.Rmd
-# 	cd \$(<D); \\
-# 	Rscript --no-save --no-restore -e "rmarkdown::render('\$(<F)')"
+# 	cd \$(<D) \\
+# 	&& Rscript --no-save --no-restore -e "rmarkdown::render('\$(<F)')"
 
 ################################################################################
 # Cleaning up
 clean-manuscripts:
-	cd manuscripts/; \\
-	rm -f *.aux *.bbl *.bcf *.blg *.fdb_latexmk *.fls *.lof *.log *.lot \\
-		*.code *.loe *.toc *.rec *.out *.run.xml *~ *.tex
+	cd manuscripts/ \\
+	&& rm -f *.aux *.bbl *.bcf *.blg *.fdb_latexmk *.fls *.lof *.log \\
+		*.lot *.code *.loe *.toc *.rec *.out *.run.xml *~ *.tex
 
 clobber: clean-manuscripts
-	cd manuscripts/; \\
-	rm -rf auto/ cache/ figure/
+	cd manuscripts/ \\
+	&& rm -rf auto/ cache/ figure/
 
 ################################################################################
 # Rule to install packages (from script extraction).
@@ -117,6 +128,20 @@ scripts/installs.txt: scripts/strip-libs.sh R/ipak.R
 	./strip-libs.sh ../Rmd/ installs.txt; \\
 	./strip-libs.sh ../manuscripts/ installs.txt; \\
 	Rscript --no-save --no-restore ../R/ipak.R insts=installs.txt
+
+################################################################################
+# Show help on important targets.
+.PHONY: help
+help: Makefile
+	@echo '\\nHelp on $1 Targets\\n----';
+	@sed -n "s/^#' //p" \$(<F);
+	@echo '----';
+
+################################################################################
+# Rule to create dependency graph.
+deps-png:
+	docker run -v \$\$(pwd):/tmp/graph stevelane/makedeps-graph \\
+	&& mv deps.* figs/
 EOF
 
 # Add install packages scripts
