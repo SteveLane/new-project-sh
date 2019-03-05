@@ -2,7 +2,7 @@
 # Little script to create a new data analysis project directory
 # Requires a single cmdline argument for the new project name
 # With inspiration from https://github.com/chendaniely/computational-project-cookie-cutter
-# Time-stamp: <2018-12-04 08:35:01 (slane)>
+# Time-stamp: <2019-03-05 13:43:54 (slane)>
 
 # Don't kill files
 set -o noclobber
@@ -155,6 +155,7 @@ inst=\$2
 for filename in \$folder/*.{r,R}{md,nw,}; do
     if [ -f \$filename ]; then
 	awk -F '[(]|[)]' '/^library|^require/{print \$2;}' \$filename >> \$inst
+	grep -oE '\b[a-zA-Z0-9]*::' $filename | awk -F '::' '{print $1;}' >> $inst
     fi
 done
 sort < \$inst > \$inst.bk
